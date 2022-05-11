@@ -21,36 +21,6 @@ public class SecondSplitProcess implements StreamProcess {
 
         FolderChecker.checkFolder(outputDir);
 
-        // Вывод в консоль элементов
-//        inputStream
-//                .map(elem -> {
-//                    String msg = "Print item : " + elem.CountryName;
-//                    System.out.println(String.format("%s %s %s", "\u001B[33m", msg, "\u001B[0m"));
-//                    return (elem);
-//
-//                }).timeWindowAll(Time.seconds(windowInterval));
-
-//        SingleOutputStreamOperator<Integer> map = inputStream
-//                // Define a counter record for each input item
-//                .map(item
-//                        -> new Integer(1))
-//                .returns(Types.INT)
-//                // Set window by time
-//                .timeWindowAll(Time.seconds(windowTime))
-//
-//                // Accumulate the number of records in each time window's interval
-//                .sum(0)
-//
-//                // Execute print method, since there is only one item in the stream the method will be executed once
-//                .map(new MapFunction<Integer, Integer>() {
-//                    @Override
-//                    public Integer map(Integer recordCount) throws Exception {
-//                        String msg = "InputData objects count in the last " + windowTime + " seconds " + recordCount;
-//                        System.out.println(String.format("%s %s %s", "\u001B[32m", msg, "\u001B[0m"));
-//                        return recordCount;
-//                    }
-//                });
-
         Tuple2<DataStream<InputData>, DataStream<InputData>> getSplits = splitStreamProcess(inputStream);
         FirstBasicProcess.countingStream(getSplits.f0);
         FirstBasicProcess.countingStream(getSplits.f1);
@@ -60,19 +30,26 @@ public class SecondSplitProcess implements StreamProcess {
 
     public static Tuple2<DataStream<InputData>, DataStream<InputData>> splitStreamProcess(DataStream<InputData> inputStream){
 
-        final OutputTag<InputData> outputTag = new OutputTag<InputData>("side-output") {};
-        final OutputTag<InputData> outputTag2 = new OutputTag<InputData>("side-output_2") {};
+        final OutputTag<InputData> outputTag = new OutputTag<InputData>("Foreign") {};
+        final OutputTag<InputData> outputTag2 = new OutputTag<InputData>("Ally") {};
 
         SingleOutputStreamOperator<InputData> mainDataStream = inputStream
                 .process(new ProcessFunction<InputData, InputData>() {
                     @Override
                     public void processElement(InputData inputData, Context context, Collector<InputData> collector) throws Exception {
                         // emit data to regular output
-                        collector.collect(inputData);
+                        //collector.collect(inputData);
 
-                        // emit data to side output
-                        context.output(outputTag, inputData);
-                        context.output(outputTag2, inputData);
+                        switch (inputData.getCountryName()){
+                            case "USA":
+                            case "Germany":
+                                context.output(outputTag, inputData);
+                                break;
+                            case "Ukraine":
+                            case "Russia":
+                                context.output(outputTag2, inputData);
+                                break;
+                        }
 
                     }
                 });
@@ -83,7 +60,7 @@ public class SecondSplitProcess implements StreamProcess {
         // Вывод в консоль элементов
         sideOutputStream
                 .map(elem -> {
-                    String msg = "sideOutputStream item : " + elem.getCountryName();
+                    String msg = "Foreign item : " + elem.getCountryName();
                     System.out.printf("%s %s %s%n", "\u001B[33m", msg, "\u001B[0m");
                     return (elem);
 
@@ -91,7 +68,7 @@ public class SecondSplitProcess implements StreamProcess {
         // Вывод в консоль элементов
         sideOutputStream2
                 .map(elem -> {
-                    String msg = "sideOutputStream2 item : " + elem.getCountryName();
+                    String msg = "Ally item : " + elem.getCountryName();
                     System.out.printf("%s %s %s%n", "\u001B[33m", msg, "\u001B[0m");
                     return (elem);
 

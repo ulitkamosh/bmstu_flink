@@ -7,9 +7,6 @@ import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
-import java.io.BufferedReader;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.Scanner;
 
 public class StreamProcessApplication {
@@ -20,7 +17,6 @@ public class StreamProcessApplication {
     public static void main(String[] args) {
 
         try{
-
             // Setup a Flink streaming execution environment
             Configuration config = new Configuration();
             config.setBoolean(ConfigConstants.LOCAL_START_WEBSERVER, true);
@@ -64,9 +60,9 @@ public class StreamProcessApplication {
 
     private static Utils.StreamProcess userSelection(){
         System.out.println("Please select the stream processing function:\n" +
-                "* '1' for split and merge stream operations\n" +
-                "* '2' for basic stream operation\n" +
-                "* '3' for time-based window operation\n" +
+                "* '1' for basic stream operation\n" +
+                "* '2' for split stream operation\n" +
+                "* '3' for split and merge stream operations\n" +
                 "* 'e' to exit");
 
         Scanner scanner = new Scanner(System.in);

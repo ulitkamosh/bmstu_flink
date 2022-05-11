@@ -66,9 +66,6 @@ public class FirstBasicProcess implements StreamProcess {
                 .map((MapFunction<Tuple3<String, String, Integer>, Tuple2<String, Integer>>) item ->
                         new Tuple2<>(item.f0 + " " + item.f1, item.f2)
                 ).returns(Types.TUPLE(Types.STRING, Types.INT));
-//                .keyBy(0)  // returns KeyedStream<T, Tuple> based on the first item ('name' fields)
-//                .timeWindow(Time.seconds(2)) // return WindowedStream<T, KEY, TimeWindow>
-//                .reduce((x,y) -> new Tuple2<String,Integer>(x.f0+"-"+y.f0, x.f1+y.f1));
 
         countriesCount.print();
 

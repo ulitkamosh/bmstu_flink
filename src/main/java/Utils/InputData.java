@@ -26,7 +26,7 @@ public class InputData {
     public static InputData getDataObject(String inputStr) {
         // Split the string
         String[] attributes = inputStr
-                .replace("[", "").replace("]", "")
+                .replace("[", "").replace("]", "").replace(" ", "")
                 .split(",");
 
         // Ignore empty strings
