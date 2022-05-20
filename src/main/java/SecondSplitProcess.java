@@ -37,9 +37,10 @@ public class SecondSplitProcess implements StreamProcess {
                 .process(new ProcessFunction<InputData, InputData>() {
                     @Override
                     public void processElement(InputData inputData, Context context, Collector<InputData> collector) throws Exception {
-                        // emit data to regular output
-                        //collector.collect(inputData);
 
+                        // Разделяем поток в зависимости от названия страны
+                        // в outputTag проходят только USA и Germany
+                        // в outputTag2 проходят только Ukraine и Russia
                         switch (inputData.getCountryName()){
                             case "USA":
                             case "Germany":

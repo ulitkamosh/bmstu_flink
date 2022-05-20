@@ -30,9 +30,10 @@ public class StreamProcessApplication {
             // The default parallel is based on the number of CPU cores
             System.out.println("\nTotal Parallel Task Slots : " + streamEnv.getParallelism());
 
-            //Create a DataStream based on the directory
+            // Создаем поток из веб-сокета
             DataStream<String> lines = streamEnv.socketTextStream(HOSTNAME, HOSTPORT);
 
+            // Преобразуем входящие строки в объект типа InputData
             DataStream<InputData> dataStream = lines
                     .map((MapFunction<String, InputData>) inputStr -> {
                         System.out.println("--- Received Record : " + inputStr);
@@ -69,21 +70,11 @@ public class StreamProcessApplication {
         String str = scanner.next();
 
         // Create a stream processing object based on the user's selection.
-        if(str.startsWith("1")) {
-            return new FirstBasicProcess();
-        }
-        else if(str.startsWith("2")) {
-            return new SecondSplitProcess();
-        }
-        else if(str.startsWith("3")) {
-            return new ThirdMergeProcess();
-        }
-        else if(str.startsWith("e")) {
-            System.exit(0);
-        }
-        else {
-            System.out.println("Unknown input "+str);
-        }
+        if(str.startsWith("1")) return new FirstBasicProcess();
+        else if(str.startsWith("2")) return new SecondSplitProcess();
+        else if(str.startsWith("3")) return new ThirdMergeProcess();
+        else if(str.startsWith("e")) System.exit(0);
+        else System.out.println("Unknown input " + str);
 
         return null;
     }

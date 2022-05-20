@@ -31,8 +31,12 @@ public class GenerateSocketInput  implements Runnable {
     public void run() {
 
         try {
+            // Создание сервера для веб-сокета, т.к. чтобы передавать данные
+            // по веб-сокету нужна отправляющая и принимающая сторона
             server = new ServerSocket(HOSTPORT);
+            // Ждем пока на порт постучатся и принимаем подключение
             clientSocket = server.accept();
+            // переменная для отправки сообщений через веб-сокет
             out = new PrintWriter(clientSocket.getOutputStream(), true);
 
             emitData();

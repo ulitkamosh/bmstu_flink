@@ -22,10 +22,12 @@ public class ThirdMergeProcess implements StreamProcess {
     public void process(DataStream<InputData> inputStream) throws IOException {
         FolderChecker.checkFolder(outputDir);
 
+        // Разделяем поток
         Tuple2<DataStream<InputData>, DataStream<InputData>> getSplits =
                 SecondSplitProcess.
                         splitStreamProcess(inputStream);
 
+        // Соединяем два потока в один
         mergeStreamProcess(
             FirstBasicProcess.countingStream(getSplits.f0),
             FirstBasicProcess.countingStream(getSplits.f1)
