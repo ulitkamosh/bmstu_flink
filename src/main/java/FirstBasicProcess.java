@@ -51,8 +51,8 @@ public class FirstBasicProcess implements StreamProcess {
                         public void processElement(InputData inputData, Context context, Collector<InputData> collector) throws Exception {
                             additionalInfo.registerString(inputData);
                             collector.collect(inputData);
-//                            System.out.println(Date.from(Instant.now()).getTime() - inputData.getTimeCreated());
-                            System.out.printf("%s %s %s%n", "\u001B[35m", additionalInfo, "\u001B[0m");
+                            long currentProcessTime = Date.from(Instant.now()).getTime() - inputData.getTimeCreated();
+                            System.out.printf("%s %s %s%n", "\u001B[35m", additionalInfo + " currentProcessTime=" + currentProcessTime, "\u001B[0m");
 
                         }
                     })
