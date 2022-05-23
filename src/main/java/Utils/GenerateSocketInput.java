@@ -85,7 +85,7 @@ public class GenerateSocketInput  implements Runnable {
             out.println(msg);
 
             // Sleep for a random time the next cycle.
-            Thread.sleep(random.nextInt(1000),25);
+            //Thread.sleep(random.nextInt(1000),25);
         }
 
         // Once one cycle is finished, the user can select to start another one or quit.

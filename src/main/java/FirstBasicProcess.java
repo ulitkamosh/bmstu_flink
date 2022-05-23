@@ -1,3 +1,4 @@
+import Utils.AdditionalInfo;
 import Utils.FolderChecker;
 import Utils.InputData;
 import Utils.StreamProcess;
@@ -8,16 +9,28 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.core.fs.Path;
 import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.functions.ProcessFunction;
 import org.apache.flink.streaming.api.functions.sink.filesystem.StreamingFileSink;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.streaming.experimental.CollectSink;
+import org.apache.flink.util.Collector;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.time.Instant;
+import java.util.*;
 
 public class FirstBasicProcess implements StreamProcess {
 
     // Prepare the output directory (sink). It will store the output of the process action on the incoming stream.
     private static final String outputDir = "data/sink_summary";
+//    private Long msgCount = 0L;
+//    static final AdditionalInfo additionalInfo = new AdditionalInfo();
+    static final AdditionalInfo additionalInfo = new AdditionalInfo();
+
+
 
     @Override
     public void process(DataStream<InputData> inputStream) throws IOException {
@@ -33,12 +46,29 @@ public class FirstBasicProcess implements StreamProcess {
         // Convert each record to a Tuple with name and score
         DataStream<Tuple2<String, Integer>> countriesCount
                 = inputStream
+                .process((new ProcessFunction<InputData, InputData>() {
+                        @Override
+                        public void processElement(InputData inputData, Context context, Collector<InputData> collector) throws Exception {
+                            additionalInfo.registerString(inputData);
+                            collector.collect(inputData);
+//                            System.out.println(Date.from(Instant.now()).getTime() - inputData.getTimeCreated());
+                            System.out.printf("%s %s %s%n", "\u001B[35m", additionalInfo, "\u001B[0m");
+
+                        }
+                    })
+                )
                 .map((MapFunction<InputData, Tuple2<String, Integer>>) item ->
                         new Tuple2<>(item.getCountryName(), 1)
                 ).returns(Types.TUPLE(Types.STRING, Types.INT))
                 .keyBy(0)  // returns KeyedStream<T, Tuple> based on the first item ('name' fields)
                 .timeWindow(Time.seconds(2)) // return WindowedStream<T, KEY, TimeWindow>
-                .reduce((x,y) -> new Tuple2<String,Integer>(x.f0+"-"+y.f0, x.f1+y.f1));
+                .reduce((x,y) -> new Tuple2<>(
+                        x.f0+"-"+y.f0,
+                        x.f1+y.f1
+                    )
+                );
+
+        //Date.from(Instant.now()).getTime()
 
         countriesCount.print();
 

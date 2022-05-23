@@ -3,16 +3,24 @@ package Utils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.flink.shaded.netty4.io.netty.util.internal.StringUtil;
 
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class InputData {
 
     int id;
     String CountryName;
+    long timeCreated;
 
     public InputData(int id, String countryName) {
         this.id = id;
         CountryName = countryName;
+        timeCreated = Date.from(Instant.now()).getTime();
+    }
+
+    public long getTimeCreated() {
+        return timeCreated;
     }
 
     public int getId() {

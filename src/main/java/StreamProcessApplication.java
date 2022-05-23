@@ -1,3 +1,4 @@
+import Utils.AdditionalInfo;
 import Utils.GenerateSocketInput;
 import Utils.InputData;
 import org.apache.flink.api.common.functions.MapFunction;
@@ -48,7 +49,7 @@ public class StreamProcessApplication {
             streamOperation.process(dataStream);
 
             //Start the File Stream generator on a separate thread
-            startGeneratingStream(10);
+            startGeneratingStream(10000);
 
             // execute the streaming pipeline
             streamEnv.execute("Flink Streaming process");
